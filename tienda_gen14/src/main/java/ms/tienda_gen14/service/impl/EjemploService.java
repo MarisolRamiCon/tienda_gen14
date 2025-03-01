@@ -1,4 +1,4 @@
-package ms.tienda_gen14.service;
+package ms.tienda_gen14.service.impl;
 
 import org.springframework.stereotype.Service;
 
