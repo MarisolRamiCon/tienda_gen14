@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Empleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Integer Id;
 
     @Column(name = "nombre")
@@ -32,7 +32,7 @@ public class Empleado {
     private Double salario;
 
     @Column(name = "fecha_contratacion")
-    private String fechaContracion;
+    private String fecha_contratacion;
 
     @Column(name = "Activo")
     private Boolean activo;

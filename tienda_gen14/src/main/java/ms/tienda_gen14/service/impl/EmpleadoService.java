@@ -53,4 +53,9 @@ public class EmpleadoService implements IEmpleadoService {
     public List<Empleado> activoIgual(Boolean bool) {
         return empleadoRepository.findByActivoEquals(true);
     }
+
+    @Override
+    public List<Empleado> fechas(String fecha_contratacion, Double salario) {
+        return empleadoRepository.fechas(fecha_contratacion,salario);
+    }
 }

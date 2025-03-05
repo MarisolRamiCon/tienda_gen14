@@ -47,4 +47,9 @@ public class EmpleadoController {
         return empleadoService.deleteById(id);
     }
 
+    @GetMapping("/empleadosfechas")
+    public List<Empleado> fechas(@PathParam("fecha_contratacion")String fecha_contratacion, @PathParam("salario") Double salario){
+        return empleadoService.fechas(fecha_contratacion, salario);
+    }
+
 }
