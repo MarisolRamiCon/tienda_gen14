@@ -9,7 +9,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class TiendaGen14Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TiendaGen14Application.class, args);
+			SpringApplication.run(TiendaGen14Application.class, args);
+
+
+
 	}
 
 }
