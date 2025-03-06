@@ -2,6 +2,7 @@ package ms.tienda_gen14.controller;
 
 import jakarta.websocket.server.PathParam;
 import ms.tienda_gen14.entity.Empleado;
+import ms.tienda_gen14.response.EmpleadoResponse;
 import ms.tienda_gen14.service.impl.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,17 @@ public class EmpleadoController {
     @Autowired
     EmpleadoService empleadoService;
 
+
     @GetMapping("/empleados")
     public List<Empleado> readAll(){
-        return empleadoService.readAll();
+            return empleadoService.readAll();
+    }
+
+
+
+    @GetMapping("/empleados/all")
+    public List<EmpleadoResponse> all(){
+        return empleadoService.All();
     }
 
     @GetMapping("/empleados/{id}")

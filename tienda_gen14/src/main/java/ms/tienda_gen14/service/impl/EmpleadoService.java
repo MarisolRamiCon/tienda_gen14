@@ -2,6 +2,7 @@ package ms.tienda_gen14.service.impl;
 
 import ms.tienda_gen14.entity.Empleado;
 import ms.tienda_gen14.repository.EmpleadoRepository;
+import ms.tienda_gen14.response.EmpleadoResponse;
 import ms.tienda_gen14.service.IEmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,31 @@ public class EmpleadoService implements IEmpleadoService {
     @Autowired
     EmpleadoRepository empleadoRepository;
 
+
     @Override
     public List<Empleado> readAll() {
-        return empleadoRepository.findAll();
+            return empleadoRepository.findAll();
+
+    }
+
+    @Override
+    public List<EmpleadoResponse> All() {
+        return empleadoRepository.findAll().stream().map(per ->{
+            EmpleadoResponse response = new EmpleadoResponse(per.getId(),per.getNombre(),per.getApellido(),per.getPuesto());
+            return response;
+        }).toList();
     }
 
     @Override
     public Optional<Empleado> readById(Integer id) {
-          Optional<Empleado> empleado= empleadoRepository.findById(id);
-          return empleado;
+        try{
+            Optional<Empleado> empleado= empleadoRepository.findById(id);
+            return empleado;
+        }catch (Exception e){
+            throw new RuntimeException("Error ID");
+        }
+
+
     }
 
     @Override
