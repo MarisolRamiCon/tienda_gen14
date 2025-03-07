@@ -5,17 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "inventario")
-public class Inventario {
+public class InventarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_inventario")
     private Integer idInventario;
 
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
+//    private ProductoEntity producto;
     @Column(name = "id_producto")
     private Integer idProducto;
 
@@ -25,45 +28,5 @@ public class Inventario {
     @Column(name = "active")
     private Boolean active;
 
-    public Inventario() {
-    }
 
-    public Inventario(Integer idInventario, Integer idProducto, Integer stockInventario, Boolean active) {
-        this.idInventario = idInventario;
-        this.idProducto = idProducto;
-        this.stockInventario = stockInventario;
-        this.active = active;
-    }
-
-    public Integer getIdInventario() {
-        return idInventario;
-    }
-
-    public void setIdInventario(Integer idInventario) {
-        this.idInventario = idInventario;
-    }
-
-    public Integer getIdProducto() {
-        return idProducto;
-    }
-
-    public void setIdProducto(Integer idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public Integer getStockInventario() {
-        return stockInventario;
-    }
-
-    public void setStockInventario(Integer stockInventario) {
-        this.stockInventario = stockInventario;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 }

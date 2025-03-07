@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 public class FeignConfig {
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return  requestTemplate -> {
-            requestTemplate.header("Autorization","Bearer" + "your-token");
+        return requestTemplate -> {
+            requestTemplate.header("Autorization", "Bearer" + "your-token");
         };
     }
 }

@@ -1,10 +1,7 @@
 package ms.tienda_gen14.service.impl;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import ms.tienda_gen14.entity.Inventario;
-import ms.tienda_gen14.entity.Producto;
+import ms.tienda_gen14.entity.InventarioEntity;
 import ms.tienda_gen14.repository.InventarioRepository;
-import ms.tienda_gen14.repository.ProductoRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class InventarioServiceTest {
+class InventarioEntityServiceTest {
 
     @InjectMocks
     InventarioService inventarioService;
@@ -30,10 +27,10 @@ class InventarioServiceTest {
     InventarioRepository inventarioRepository;
 
     //Inicio de objetos
-    List<Inventario> inventarioList;
-    private Inventario inventario;
-    private Inventario inventario2;
-    private Inventario inventario3;
+    List<InventarioEntity> inventarioEntityList;
+    private InventarioEntity inventarioEntity;
+    private InventarioEntity inventarioEntity2;
+    private InventarioEntity inventarioEntity3;
 
 
     @BeforeEach
@@ -42,15 +39,15 @@ class InventarioServiceTest {
         System.out.println("Método setUp");
 
         // Crear datos de prueba
-        inventario = new Inventario(1, 101, 50, true);
-        inventario2 = new Inventario(2, 102, 30, false);
-        inventario3 = new Inventario(3, 103, 75, true);
+        inventarioEntity = new InventarioEntity(1, 101, 50, true);
+        inventarioEntity2 = new InventarioEntity(2, 102, 30, false);
+        inventarioEntity3 = new InventarioEntity(3, 103, 75, true);
 
         // Inicializar la lista y agregar los inventarios
-        inventarioList = new ArrayList<>();
-        inventarioList.add(inventario);
-        inventarioList.add(inventario2);
-        inventarioList.add(inventario3);
+        inventarioEntityList = new ArrayList<>();
+        inventarioEntityList.add(inventarioEntity);
+        inventarioEntityList.add(inventarioEntity2);
+        inventarioEntityList.add(inventarioEntity3);
 
     }
 
@@ -64,16 +61,16 @@ class InventarioServiceTest {
     @Test
     void readAll() {
         // Simular el comportamiento del repositorio para devolver la lista de inventarios completa
-        when(inventarioRepository.findAll()).thenReturn(inventarioList);
+        when(inventarioRepository.findAll()).thenReturn(inventarioEntityList);
 
         // Llamar al método a probar
-        List<Inventario> resultado = inventarioService.readAll();
+        List<InventarioEntity> resultado = inventarioService.readAll();
 
         // Crear la lista esperada de inventarios activos
-        List<Inventario> listaEsperada = new ArrayList<>();
-        listaEsperada.add(inventario);
+        List<InventarioEntity> listaEsperada = new ArrayList<>();
+        listaEsperada.add(inventarioEntity);
 //      listaEsperada.add(inventario2);
-        listaEsperada.add(inventario3);
+        listaEsperada.add(inventarioEntity3);
 
         // Comparar la lista esperada con el resultado obtenido
         assertEquals(listaEsperada,resultado);
@@ -83,42 +80,42 @@ class InventarioServiceTest {
     @Test
     void readById() {
         // Simular el comportamiento del repositorio
-        when(inventarioRepository.findById(1)).thenReturn(Optional.of(inventario));
+        when(inventarioRepository.findById(1)).thenReturn(Optional.of(inventarioEntity));
 
         // Llamar al método a probar
-        Optional<Inventario> resultado = inventarioService.readById(1);
+        Optional<InventarioEntity> resultado = inventarioService.readById(1);
 
         // Verificar el resultado
-        assertEquals(Optional.of(inventario), resultado);
+        assertEquals(Optional.of(inventarioEntity), resultado);
     }
 
     @Test
     void create() {
         // Simular el comportamiento del repositorio
-        when(inventarioRepository.save(inventario)).thenReturn(inventario);
+        when(inventarioRepository.save(inventarioEntity)).thenReturn(inventarioEntity);
 
         // Llamar al método a probar
-        Inventario resultado = inventarioService.create(inventario);
+        InventarioEntity resultado = inventarioService.create(inventarioEntity);
 
         // Verificar el resultado
-        assertEquals(inventario,resultado);
+        assertEquals(inventarioEntity,resultado);
     }
 
     @Test
     void update() {
 
-        when(inventarioRepository.save(inventario)).thenReturn(inventario);
+        when(inventarioRepository.save(inventarioEntity)).thenReturn(inventarioEntity);
 
-        Inventario resultado = inventarioService.update(inventario);
+        InventarioEntity resultado = inventarioService.update(inventarioEntity);
 
-        assertEquals(inventario,resultado);
+        assertEquals(inventarioEntity,resultado);
     }
 
     @Test
     void deleteById_True() {
         // Simular el comportamiento del repositorio
-        when(inventarioRepository.findById(1)).thenReturn(Optional.of(inventario));
-        when(inventarioRepository.save(inventario)).thenReturn(inventario);
+        when(inventarioRepository.findById(1)).thenReturn(Optional.of(inventarioEntity));
+        when(inventarioRepository.save(inventarioEntity)).thenReturn(inventarioEntity);
 
         // Llamar al método a probar
         String resultado = inventarioService.deleteById(1);

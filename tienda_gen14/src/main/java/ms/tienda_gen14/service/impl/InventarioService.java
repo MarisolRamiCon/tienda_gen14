@@ -1,8 +1,9 @@
 package ms.tienda_gen14.service.impl;
 
 
-import ms.tienda_gen14.entity.Inventario;
+import ms.tienda_gen14.entity.InventarioEntity;
 import ms.tienda_gen14.repository.InventarioRepository;
+import ms.tienda_gen14.response.InventarioResponse;
 import ms.tienda_gen14.service.IInventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,36 +18,34 @@ public class InventarioService implements IInventarioService {
     InventarioRepository inventarioRepository;
 
     @Override
-    public List<Inventario> readAll() {
-
-
+    public List<InventarioEntity> readAll() {
         return inventarioRepository.findAll().stream()
-                .filter(inventario -> inventario.getActive() == true)
+                .filter(inventario -> inventario.getActive())
                 .toList();
     }
 
     @Override
-    public Optional<Inventario> readById(Integer idInventario) {
+    public Optional<InventarioEntity> readById(Integer idInventario) {
         return inventarioRepository.findById(idInventario);
     }
 
     @Override
-    public Inventario create(Inventario inventario) {
-        return inventarioRepository.save(inventario);
+    public InventarioEntity create(InventarioEntity inventarioEntity) {
+        return inventarioRepository.save(inventarioEntity);
     }
 
     @Override
-    public Inventario update(Inventario inventario) {
-        return inventarioRepository.save(inventario);
+    public InventarioEntity update(InventarioEntity inventarioEntity) {
+        return inventarioRepository.save(inventarioEntity);
     }
 
     @Override
     public String deleteById(Integer id) {
-        Optional<Inventario> inventarioOptional = inventarioRepository.findById(id);
+        Optional<InventarioEntity> inventarioOptional = inventarioRepository.findById(id);
         if (inventarioOptional.isPresent()) {
-            Inventario inventario = inventarioOptional.get();
-            inventario.setActive(false);
-            inventarioRepository.save(inventario);
+            InventarioEntity inventarioEntity = inventarioOptional.get();
+            inventarioEntity.setActive(false);
+            inventarioRepository.save(inventarioEntity);
             return "Borrado exitoso";
         }
         return "No se encontró el registro";
@@ -54,13 +53,35 @@ public class InventarioService implements IInventarioService {
 
     //Métodos personalizados
     @Override
-    public List<Inventario> findByStockInventarioLessThan(Integer stock) {
+    public List<InventarioEntity> findByStockInventarioLessThan(Integer stock) {
         return inventarioRepository.findByStockInventarioLessThan(stock);
     }
 
     //Métodos personalizados
     @Override
-    public List<Inventario> findInventariosWithStockBetween(Integer stockInicio, Integer stockFin) {
+    public List<InventarioEntity> findInventariosWithStockBetween(Integer stockInicio, Integer stockFin) {
         return inventarioRepository.findInventariosWithStockBetween(stockInicio,stockFin);
     }
+
+    @Override
+    public List<InventarioResponse> readAllResponse() {
+        return inventarioRepository.findAll().stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
+
+    @Override
+    public Optional<InventarioResponse> readByIdResponse(Integer id) {
+        return inventarioRepository.findById(id)
+                .map(this::convertToResponse);
+    }
+
+    private InventarioResponse convertToResponse(InventarioEntity inventario) {
+        InventarioResponse response = new InventarioResponse();
+        response.setIdInventarioResponse(inventario.getIdInventario());
+        response.setIdProductoResponse(inventario.getIdProducto());
+        response.setStockInventarioResponse(inventario.getStockInventario());
+        return response;
+    }
+
 }
