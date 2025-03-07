@@ -1,6 +1,7 @@
 package ms.tienda_gen14.controller;
 
-import ms.tienda_gen14.entity.Producto;
+import ms.tienda_gen14.entity.ProductoEntity;
+import ms.tienda_gen14.response.ProductoResponse;
 import ms.tienda_gen14.service.impl.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,25 +16,25 @@ public class ProductoController {
     ProductoService productoService;
 
     @GetMapping("/readAll")
-    public List<Producto> readAll() {
+    public List<ProductoEntity> readAll() {
         return productoService.readAll();
     }
 
     @GetMapping("/readId/{id}")
-    public Optional<Producto> readById(@PathVariable Integer id) {
+    public Optional<ProductoEntity> readById(@PathVariable Integer id) {
         return productoService.readById(id);
     }
 
     //Crear
     @PostMapping("/save")
-    public Producto create(@RequestBody Producto producto) {
-        return productoService.create(producto);
+    public ProductoEntity create(@RequestBody ProductoEntity productoEntity) {
+        return productoService.create(productoEntity);
     }
 
     //Método update
     @PutMapping("/update")
-    public Producto update(@RequestBody Producto producto) {
-        return productoService.update(producto);
+    public ProductoEntity update(@RequestBody ProductoEntity productoEntity) {
+        return productoService.update(productoEntity);
     }
 
     //Método delete
@@ -44,13 +45,24 @@ public class ProductoController {
 
     //Métodos personalizados
     @GetMapping("/findByStockProductoLessThan")
-    public List<Producto> findByStockProductoLessThan(@RequestParam("stock") Integer stock) {
+    public List<ProductoEntity> findByStockProductoLessThan(@RequestParam("stock") Integer stock) {
         return productoService.findByStockProductoLessThan(stock);
     }
 
     @GetMapping("/findProductosWithPriceGreaterThanAverage")
-    public List<Producto> findProductosWithPriceGreaterThanAverage() {
+    public List<ProductoEntity> findProductosWithPriceGreaterThanAverage() {
         return productoService.findProductosWithPriceGreaterThanAverage();
     }
 
+    //Métodos response DTO
+    @GetMapping("/readAllResponse")
+    public List<ProductoResponse> readAllResponse() {
+        return productoService.readAllResponse();
+    }
+
+    //Métodos response DTO
+    @GetMapping("/readByIdResponse/{id}")
+    public Optional<ProductoResponse> readByIdResponse(@PathVariable Integer id) {
+        return productoService.readByIdResponse(id);
+    }
 }
