@@ -1,6 +1,8 @@
 package ms.tienda_gen14.controller;
 
-import ms.tienda_gen14.entity.Inventario;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import ms.tienda_gen14.entity.InventarioEntity;
+import ms.tienda_gen14.response.InventarioResponse;
 import ms.tienda_gen14.service.impl.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,26 +18,26 @@ public class InventarioController {
     InventarioService inventarioService;
 
     @GetMapping("/readAll")
-    public List<Inventario> readAll() {
+    public List<InventarioEntity> readAll() {
 
         return inventarioService.readAll();
     }
 
     @GetMapping("/readId/{id}")
-    public Optional<Inventario> readById(@PathVariable Integer id) {
+    public Optional<InventarioEntity> readById(@PathVariable Integer id) {
 
         return inventarioService.readById(id);
     }
 
     @PostMapping("/save")
-    public Inventario create(@RequestBody Inventario inventario) {
-        return inventarioService.create(inventario);
+    public InventarioEntity create(@RequestBody InventarioEntity inventarioEntity) {
+        return inventarioService.create(inventarioEntity);
     }
 
     //Método update
     @PutMapping("/update")
-    public Inventario update(@RequestBody Inventario inventario) {
-        return inventarioService.update(inventario);
+    public InventarioEntity update(@RequestBody InventarioEntity inventarioEntity) {
+        return inventarioService.update(inventarioEntity);
     }
 
     //Método delete
@@ -46,17 +48,28 @@ public class InventarioController {
 
     //Método personalizado
     @GetMapping("/findByStockProductoLessThan")
-    public List<Inventario> findByStockProductoLessThan(@RequestParam("stock") Integer stock) {
+    public List<InventarioEntity> findByStockProductoLessThan(@RequestParam("stock") Integer stock) {
         return inventarioService.findByStockInventarioLessThan(stock);
     }
 
     //Método personalizado
     @GetMapping("/findInventariosWithStockBetween")
-    public List<Inventario> findInventariosWithStockBetween(@RequestParam("stockInicio") Integer stockInicio,
-                                                            @RequestParam("stockFin") Integer stockFin) {
+    public List<InventarioEntity> findInventariosWithStockBetween(@RequestParam("stockInicio") Integer stockInicio,
+                                                                  @RequestParam("stockFin") Integer stockFin) {
 
         return inventarioService.findInventariosWithStockBetween(stockInicio, stockFin);
     }
 
+    //Métodos response DTO
+    @GetMapping("/readAllResponse")
+    public List<InventarioResponse> readAllResponse() {
+        return inventarioService.readAllResponse();
+    }
+
+    //Métodos response DTO
+    @GetMapping("/readByIdResponse/{id}")
+    public Optional<InventarioResponse> readByIdResponse(@PathVariable Integer id) {
+        return inventarioService.readByIdResponse(id);
+    }
 
 }

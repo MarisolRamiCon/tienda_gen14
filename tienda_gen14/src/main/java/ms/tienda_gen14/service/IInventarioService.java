@@ -1,7 +1,8 @@
 package ms.tienda_gen14.service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
-import ms.tienda_gen14.entity.Inventario;
+import ms.tienda_gen14.entity.InventarioEntity;
+import ms.tienda_gen14.response.InventarioResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,22 +10,27 @@ import java.util.Optional;
 public interface IInventarioService {
 
     //Obtener todos los registros
-    public List<Inventario> readAll();
+    public List<InventarioEntity> readAll();
 
     //Buscar inventario por Id
-    public Optional<Inventario> readById(Integer idInventario);
+    public Optional<InventarioEntity> readById(Integer idInventario);
 
     //Crear un registro
-    public Inventario create(Inventario inventario);
+    public InventarioEntity create(InventarioEntity inventarioEntity);
 
     //Actualizar un registro
-    public Inventario update(Inventario inventario);
+    public InventarioEntity update(InventarioEntity inventarioEntity);
 
     //Eliminar un registro de forma logica
     public String deleteById(Integer id);
 
     //Métodos personalizados
-    public List<Inventario> findByStockInventarioLessThan(Integer stock);
+    public List<InventarioEntity> findByStockInventarioLessThan(Integer stock);
 
-    public List<Inventario> findInventariosWithStockBetween(Integer stockInicio, Integer stockFin);
+    public List<InventarioEntity> findInventariosWithStockBetween(Integer stockInicio, Integer stockFin);
+
+    //Métodos Response DTO
+    public List<InventarioResponse> readAllResponse();
+    public Optional<InventarioResponse> readByIdResponse(Integer id);
+
 }
