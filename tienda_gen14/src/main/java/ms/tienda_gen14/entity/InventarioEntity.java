@@ -13,12 +13,15 @@ import lombok.NoArgsConstructor;
 public class Inventario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_inventario")
+    @Column(name = "id_inventario")
     private Integer idInventario;
-    @Column(name = "ID_producto")
+
+    @Column(name = "id_producto")
     private Integer idProducto;
+
     @Column(name = "stock_inventario")
     private Integer stockInventario;
+
     @Column(name = "active")
     private Boolean active;
 
