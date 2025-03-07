@@ -1,6 +1,6 @@
 package ms.tienda_gen14.service.impl;
 
-import ms.tienda_gen14.entity.Empleado;
+import ms.tienda_gen14.entity.EmpleadoEntity;
 import ms.tienda_gen14.repository.EmpleadoRepository;
 import ms.tienda_gen14.response.EmpleadoResponse;
 import ms.tienda_gen14.service.IEmpleadoService;
@@ -18,7 +18,7 @@ public class EmpleadoService implements IEmpleadoService {
 
 
     @Override
-    public List<Empleado> readAll() {
+    public List<EmpleadoEntity> readAll() {
         try{
             var empleado = empleadoRepository.findAll();
             if(empleado == null){
@@ -47,9 +47,9 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public Optional<Empleado> readById(Integer id) {
+    public Optional<EmpleadoEntity> readById(Integer id) {
         try{
-            Optional<Empleado> empleado= empleadoRepository.findById(id);
+            Optional<EmpleadoEntity> empleado= empleadoRepository.findById(id);
             if(!empleado.isPresent()){
                 throw new RuntimeException("Algo salio mal");
             }
@@ -62,9 +62,9 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public Empleado createEmpleado(Empleado empleado) {
+    public EmpleadoEntity createEmpleado(EmpleadoEntity empleadoEntity) {
         try{
-            return empleadoRepository.save(empleado);
+            return empleadoRepository.save(empleadoEntity);
         }catch(Exception e){
             throw new RuntimeException("Algo salio mal");
         }
@@ -72,9 +72,9 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public Empleado update(Empleado empleado) {
+    public EmpleadoEntity update(EmpleadoEntity empleadoEntity) {
         try{
-            return empleadoRepository.save(empleado);
+            return empleadoRepository.save(empleadoEntity);
         }catch(Exception e){
             throw new RuntimeException("Algo salio mal");
         }
@@ -83,11 +83,11 @@ public class EmpleadoService implements IEmpleadoService {
 
     @Override
     public String deleteById(Integer id) {
-        Optional<Empleado> empleado= empleadoRepository.findById(id);
+        Optional<EmpleadoEntity> empleado= empleadoRepository.findById(id);
         if (empleado.isPresent()){
-            Empleado empleadoObj = empleado.get();
-            empleadoObj.setActivo(false);
-            empleadoRepository.save(empleadoObj);
+            EmpleadoEntity empleadoEntityObj = empleado.get();
+            empleadoEntityObj.setActivo(false);
+            empleadoRepository.save(empleadoEntityObj);
             return "borrado exitosamente";
         }else{
             return "No esta";
@@ -95,7 +95,7 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public List<Empleado> activo() {
+    public List<EmpleadoEntity> activo() {
         try{
             return empleadoRepository.findByactivoTrue();
         }catch(Exception e){
@@ -105,7 +105,7 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public List<Empleado> fechas(String fecha_contratacion, Double salario) {
+    public List<EmpleadoEntity> fechas(String fecha_contratacion, Double salario) {
         try{
             return empleadoRepository.fechas(fecha_contratacion,salario);
         }catch(Exception e){
