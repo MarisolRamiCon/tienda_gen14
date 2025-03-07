@@ -20,7 +20,13 @@ public class EmpleadoService implements IEmpleadoService {
     @Override
     public List<Empleado> readAll() {
         try{
-            return empleadoRepository.findAll();
+            var empleado = empleadoRepository.findAll();
+            if(empleado == null){
+                throw new RuntimeException("Algo salio mal");
+
+            }
+            return empleado;
+
         }catch (Exception e){
             throw new RuntimeException("Algo salio mal");
         }
@@ -44,6 +50,9 @@ public class EmpleadoService implements IEmpleadoService {
     public Optional<Empleado> readById(Integer id) {
         try{
             Optional<Empleado> empleado= empleadoRepository.findById(id);
+            if(!empleado.isPresent()){
+                throw new RuntimeException("Algo salio mal");
+            }
             return empleado;
         }catch (Exception e){
             throw new RuntimeException("Algo salio mal");
