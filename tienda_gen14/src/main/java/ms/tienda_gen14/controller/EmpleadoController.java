@@ -1,7 +1,7 @@
 package ms.tienda_gen14.controller;
 
 import jakarta.websocket.server.PathParam;
-import ms.tienda_gen14.entity.Empleado;
+import ms.tienda_gen14.entity.EmpleadoEntity;
 import ms.tienda_gen14.response.EmpleadoResponse;
 import ms.tienda_gen14.service.impl.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class EmpleadoController {
 
 
     @GetMapping("/empleados")
-    public List<Empleado> readAll(){
+    public List<EmpleadoEntity> readAll(){
             return empleadoService.readAll();
     }
 
@@ -30,25 +30,25 @@ public class EmpleadoController {
     }
 
     @GetMapping("/empleados/{id}")
-    public Optional<Empleado> readById(@PathVariable Integer id){
+    public Optional<EmpleadoEntity> readById(@PathVariable Integer id){
         return empleadoService.readById(id);
     }
 
 
     @GetMapping("/empleadoActivo")
-    public List<Empleado> activo(){
+    public List<EmpleadoEntity> activo(){
         return empleadoService.activo();
     }
 
 
     @PostMapping("/crearEmpleado")
-    public Empleado create(@RequestBody Empleado empleado){
-        return empleadoService.createEmpleado(empleado);
+    public EmpleadoEntity create(@RequestBody EmpleadoEntity empleadoEntity){
+        return empleadoService.createEmpleado(empleadoEntity);
     }
 
     @PutMapping("/empleados")
-    public Empleado update(@RequestBody Empleado empleado){
-        return empleadoService.update(empleado);
+    public EmpleadoEntity update(@RequestBody EmpleadoEntity empleadoEntity){
+        return empleadoService.update(empleadoEntity);
     }
 
     @DeleteMapping("/empleado/{id}")
@@ -57,7 +57,7 @@ public class EmpleadoController {
     }
 
     @GetMapping("/empleadosfechas")
-    public List<Empleado> fechas(@PathParam("fecha_contratacion")String fecha_contratacion, @PathParam("salario") Double salario){
+    public List<EmpleadoEntity> fechas(@PathParam("fecha_contratacion")String fecha_contratacion, @PathParam("salario") Double salario){
         return empleadoService.fechas(fecha_contratacion, salario);
     }
 
