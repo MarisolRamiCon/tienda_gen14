@@ -36,8 +36,8 @@ public class EmpleadoController {
 
 
     @GetMapping("/empleadoActivo")
-    public List<Empleado> activoIgual(@PathParam("Activo") Boolean bool){
-        return empleadoService.activoIgual(bool);
+    public List<Empleado> activo(){
+        return empleadoService.activo();
     }
 
 
@@ -46,7 +46,7 @@ public class EmpleadoController {
         return empleadoService.createEmpleado(empleado);
     }
 
-    @PostMapping("/empleados")
+    @PutMapping("/empleados")
     public Empleado update(@RequestBody Empleado empleado){
         return empleadoService.update(empleado);
     }

@@ -19,16 +19,25 @@ public class EmpleadoService implements IEmpleadoService {
 
     @Override
     public List<Empleado> readAll() {
+        try{
             return empleadoRepository.findAll();
+        }catch (Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
 
     }
 
     @Override
     public List<EmpleadoResponse> All() {
-        return empleadoRepository.findAll().stream().map(per ->{
-            EmpleadoResponse response = new EmpleadoResponse(per.getId(),per.getNombre(),per.getApellido(),per.getPuesto());
-            return response;
-        }).toList();
+        try{
+            return empleadoRepository.findAll().stream().map(per ->{
+                EmpleadoResponse response = new EmpleadoResponse(per.getId(),per.getNombre(),per.getApellido(),per.getPuesto());
+                return response;
+            }).toList();
+        }catch(Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
+
     }
 
     @Override
@@ -37,7 +46,7 @@ public class EmpleadoService implements IEmpleadoService {
             Optional<Empleado> empleado= empleadoRepository.findById(id);
             return empleado;
         }catch (Exception e){
-            throw new RuntimeException("Error ID");
+            throw new RuntimeException("Algo salio mal");
         }
 
 
@@ -45,12 +54,22 @@ public class EmpleadoService implements IEmpleadoService {
 
     @Override
     public Empleado createEmpleado(Empleado empleado) {
-        return empleadoRepository.save(empleado);
+        try{
+            return empleadoRepository.save(empleado);
+        }catch(Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
+
     }
 
     @Override
     public Empleado update(Empleado empleado) {
-        return empleadoRepository.save(empleado);
+        try{
+            return empleadoRepository.save(empleado);
+        }catch(Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
+
     }
 
     @Override
@@ -67,12 +86,22 @@ public class EmpleadoService implements IEmpleadoService {
     }
 
     @Override
-    public List<Empleado> activoIgual(Boolean bool) {
-        return empleadoRepository.findByActivoEquals(true);
+    public List<Empleado> activo() {
+        try{
+            return empleadoRepository.findByactivoTrue();
+        }catch(Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
+
     }
 
     @Override
     public List<Empleado> fechas(String fecha_contratacion, Double salario) {
-        return empleadoRepository.fechas(fecha_contratacion,salario);
+        try{
+            return empleadoRepository.fechas(fecha_contratacion,salario);
+        }catch(Exception e){
+            throw new RuntimeException("Algo salio mal");
+        }
+
     }
 }

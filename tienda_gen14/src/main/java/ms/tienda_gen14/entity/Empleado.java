@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +16,7 @@ public class Empleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer Id;
+    private Integer id;
 
     @Column(name = "nombre")
     private String nombre;
@@ -32,7 +31,7 @@ public class Empleado {
     private Double salario;
 
     @Column(name = "fecha_contratacion")
-    private String fecha_contratacion;
+    private String fechaContratacion;
 
     @Column(name = "Activo")
     private Boolean activo;

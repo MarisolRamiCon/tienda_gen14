@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EmpleadoRepository extends JpaRepository<Empleado,Integer> {
 
-    public List<Empleado> findByActivoEquals(Boolean bool);
+    public List<Empleado> findByactivoTrue();
 
     @Query(value = "select * from u630341118_gen14tienda.empleado where fecha_contratacion>=:fecha_contratacion and salario>=:salario;",nativeQuery = true)
     public List<Empleado> fechas(String fecha_contratacion, Double salario);

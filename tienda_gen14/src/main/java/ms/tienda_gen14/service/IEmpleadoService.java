@@ -14,6 +14,6 @@ public interface IEmpleadoService {
     public Empleado createEmpleado(Empleado empleado);
     public Empleado update(Empleado empleado);
     public String deleteById(Integer id);
-    public List<Empleado> activoIgual(Boolean bool);
+    public List<Empleado> activo();
     public List<Empleado> fechas(String fecha_contratacion, Double salario);
 }
