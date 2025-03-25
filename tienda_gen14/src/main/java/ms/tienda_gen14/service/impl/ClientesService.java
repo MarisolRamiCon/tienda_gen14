@@ -106,4 +106,59 @@ public class ClientesService implements IClientesService {// Cambiado a Clientes
                 c.getIdProvedor().getIdProvedor()
         ));
     }
+
+    //Borrado logico
+
+
+
+    // Método para realizar el borrado lógico de un cliente
+
+    public String deleteLogicalById(Integer id) {
+        Optional<ClientesEntity> cliente = clientesRepository.findById(id);
+        if (cliente.isPresent()) {
+            ClientesEntity clienteEntity = cliente.get();
+            clienteEntity.setIsActive(false);  // Marcamos el cliente como inactivo
+            clientesRepository.save(clienteEntity); // Guardamos los cambios en la base de datos
+            return "Cliente borrado lógicamente";
+        } else {
+            return "Cliente no encontrado";
+        }
+    }
+
+    //MTODOS TRI-CACH
+
+    // Método personalizado para obtener clientes activos
+
+    public List<ClientesEntity> getClientesActivosTry() {
+        try {
+            return clientesRepository.findByIsActiveTrue();
+        } catch (Exception e) {
+            // Capturamos cualquier error al obtener clientes activos
+            System.err.println("Error al obtener clientes activos: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();  // Retornamos una lista vacía en caso de error
+        }
+    }
+
+    // Método personalizado para buscar clientes por nombre
+
+    public List<ClientesEntity> getClientesPorNombreTry(String nombre) {
+        try {
+            return clientesRepository.findByNombre(nombre);
+        } catch (Exception e) {
+            // Capturamos cualquier error al buscar clientes por nombre
+            System.err.println("Error al obtener clientes por nombre: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();  // Retornamos una lista vacía en caso de error
+        }
+    }
+
+    // Método @QUERY que utiliza la consulta personalizada para obtener clientes por nombre parcial
+
+    public List<ClientesEntity> getClientesPorNombreContiene(String nombre) {
+        return clientesRepository.findByNombreContiene(nombre);
+    }
+
+
+
 }

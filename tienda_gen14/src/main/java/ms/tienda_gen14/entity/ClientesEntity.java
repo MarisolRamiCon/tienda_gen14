@@ -35,6 +35,10 @@ public class ClientesEntity {
     @Column(name = "is_active") // Columna para indicar si el cliente está activo
     private Boolean isActive;
 
+    public boolean isActive() {
+        return isActive;
+    }
+
     @ManyToOne(cascade = CascadeType.ALL) // Relación ManyToOne con la tabla proveedores
     @JoinColumn(name = "id_provedores") // Columna que hace la relación con la tabla proveedores
     private ProveedoresEntity idProvedor;  // Asocia el cliente con un proveedor específico
