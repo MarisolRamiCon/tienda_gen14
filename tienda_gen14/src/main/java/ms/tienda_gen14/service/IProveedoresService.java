@@ -22,6 +22,9 @@ public interface IProveedoresService {
     // Eliminar un proveedor por su ID
     public String deleteById(Integer id);
 
+    // Borrado logico
+    public String deleteLogicalById(Integer id);
+
     //Métodos personalizados
 
 }

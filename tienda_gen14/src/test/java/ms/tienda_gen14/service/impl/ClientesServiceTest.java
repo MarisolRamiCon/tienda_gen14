@@ -169,4 +169,104 @@ class ClientesServiceTest {
         assertEquals(2, result.size());
         verify(clientesRepository, times(1)).findByNombre("Juan");
     }
+
+    @Test
+    void testDeleteLogicalById_ClienteExistente() {
+        // Simulamos que el cliente existe en la base de datos
+        when(clientesRepository.findById(1)).thenReturn(Optional.of(cliente));
+
+        // Llamamos al método deleteLogicalById
+        String result = clientesService.deleteLogicalById(1);
+
+        // Verificamos que el cliente ha sido marcado como inactivo
+        assertEquals("Cliente borrado lógicamente", result);
+        assertFalse(cliente.isActive());  // El cliente debe estar inactivo
+
+        // Verificamos que se haya llamado al método save de los repositorios
+        verify(clientesRepository, times(1)).save(cliente);  // Se debe llamar al save solo una vez
+    }
+
+    @Test
+    void testDeleteLogicalById_ClienteNoExistente() {
+        // Simulamos que no se encuentra un cliente con ID 1
+        when(clientesRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Llamamos al método deleteLogicalById
+        String result = clientesService.deleteLogicalById(1);
+
+        // Verificamos que el mensaje devuelto sea el esperado
+        assertEquals("Cliente no encontrado", result);
+
+        // Verificamos que el método save no sea llamado porque no hubo actualización
+        verify(clientesRepository, times(0)).save(any(ClientesEntity.class));  // El save no debe ser llamado
+    }
+
+
+    @Test
+    void testGetClientesActivosTry() {
+        // Caso exitoso: Recupera los clientes activos
+        when(clientesRepository.findByIsActiveTrue()).thenReturn(listaClientesEntity);
+
+        List<ClientesEntity> result = clientesService.getClientesActivosTry();
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        verify(clientesRepository, times(1)).findByIsActiveTrue();
+
+        // Caso de error: Manejo de excepción y retorno de lista vacía
+        when(clientesRepository.findByIsActiveTrue()).thenThrow(new RuntimeException("Error al obtener clientes activos"));
+
+        List<ClientesEntity> resultWithError = clientesService.getClientesActivosTry();
+
+        assertNotNull(resultWithError);
+        assertTrue(resultWithError.isEmpty());  // Debe retornar lista vacía en caso de error
+        verify(clientesRepository, times(2)).findByIsActiveTrue();  // Verificamos que el método se haya ejecutado dos veces
+    }
+
+    @Test
+    void testGetClientesPorNombreTry_Success() {
+        // Arrange: Simulamos que el repositorio devuelve la lista de clientes con el nombre "Juan"
+        when(clientesRepository.findByNombre("Juan")).thenReturn(List.of(cliente, cliente1));
+
+        // Act: Llamamos al método con el nombre "Juan"
+        List<ClientesEntity> result = clientesService.getClientesPorNombreTry("Juan");
+
+        // Assert: Verificamos que el resultado no sea nulo y contenga los clientes con ese nombre
+        assertNotNull(result);
+        assertEquals(2, result.size());  // Esperamos 2 clientes con el nombre "Juan"
+        assertEquals("Juan", result.get(0).getNombre());
+    }
+
+    @Test
+    void testGetClientesPorNombreTry_Exception() {
+        // Arrange: Simulamos una excepción al llamar al repositorio
+        when(clientesRepository.findByNombre("Juan")).thenThrow(new RuntimeException("Error"));
+
+        // Act: Llamamos al método con el nombre "Juan"
+        List<ClientesEntity> result = clientesService.getClientesPorNombreTry("Juan");
+
+        // Assert: Verificamos que el resultado sea una lista vacía
+        assertTrue(result.isEmpty());
+    }
+
+
+
+    //exepcion assertThrows de @Query
+
+    @Test
+    void testGetClientesPorNombreContiene_Exception() {
+        // Arrange: Simulamos que el repositorio lanza una excepción
+        when(clientesRepository.findByNombreContiene("Juan")).thenThrow(new RuntimeException("Error al obtener clientes"));
+
+        // Act y Assert: Verificamos que la excepción sea lanzada
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clientesService.getClientesPorNombreContiene("Juan");
+        });
+
+        // Asegúrate de que el mensaje de la excepción sea el esperado
+        assertEquals("Error al obtener clientes", exception.getMessage());
+    }
+
+
+
 }

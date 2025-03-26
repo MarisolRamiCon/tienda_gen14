@@ -24,4 +24,6 @@ public interface IClientesService {
 
     // Método para obtener un cliente por su ID en formato ClientesResponse
     Optional<ClientesResponse> readByIdResponse(Integer id);
+
+    public String deleteLogicalById(Integer id);
 }
