@@ -12,5 +12,7 @@ public class Tienda {
     private Long id;
     private String establecimiento;
     private String lugar;
+    private boolean activo = true;
+
 
 }

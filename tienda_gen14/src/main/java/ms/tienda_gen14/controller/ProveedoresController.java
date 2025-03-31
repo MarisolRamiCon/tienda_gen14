@@ -11,122 +11,87 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v5") // La ruta base para todos los endpoints
-
-public class ProveedoresController { //  ProveedorController
+@RequestMapping("/api/v5") // Ruta base para todos los endpoints
+public class ProveedoresController {
 
     @Autowired
-    ProveedoresService proveedoresService; // Inyecté ProveedorService
+    private ProveedoresService proveedoresService;
 
-    @GetMapping("/proveedores") //  "proveedores"
+    // Obtener todos los proveedores
+    @GetMapping("/proveedores")
     public List<ProveedoresEntity> readAll() {
-        return proveedoresService.readAll(); // Obtener todos los proveedores
+        return proveedoresService.readAll();
     }
 
-
-    @GetMapping("/proveedores/{id}") //  "proveedores/{id}"
-    public Optional<ProveedoresEntity> readById(@PathVariable Integer id) {
-        return proveedoresService.readById(id); // Obtener un proveedor por su ID
+    // Obtener proveedor por ID
+    @GetMapping("/proveedores/{id}")
+    public ResponseEntity<ProveedoresEntity> readById(@PathVariable Integer id) {
+        Optional<ProveedoresEntity> proveedor = proveedoresService.readById(id);
+        return proveedor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/proveedores") //  "proveedores"
-    public ProveedoresEntity create(@RequestBody ProveedoresEntity proveedoresEntity) {
-        return proveedoresService.create(proveedoresEntity); // Crear un nuevo proveedor
+    // Crear un nuevo proveedor
+    @PostMapping("/proveedores")
+    public ResponseEntity<ProveedoresEntity> create(@RequestBody ProveedoresEntity proveedoresEntity) {
+        ProveedoresEntity newProveedor = proveedoresService.create(proveedoresEntity);
+        return new ResponseEntity<>(newProveedor, HttpStatus.CREATED);
     }
 
-    @PutMapping("/proveedores") // Actualizar un proveedor
-    public ProveedoresEntity update(@RequestBody ProveedoresEntity proveedoresEntity) {
-        return proveedoresService.update(proveedoresEntity); // Actualizar un proveedor
+    // Actualizar un proveedor existente
+    @PutMapping("/proveedores")
+    public ResponseEntity<ProveedoresEntity> update(@RequestBody ProveedoresEntity proveedoresEntity) {
+        ProveedoresEntity updatedProveedor = proveedoresService.update(proveedoresEntity);
+        return new ResponseEntity<>(updatedProveedor, HttpStatus.OK);
     }
 
-    @DeleteMapping("/proveedores/{id}") //  "proveedores/{id}"
-    public String deleteById(@PathVariable Integer id) {
-        return proveedoresService.deleteById(id); // Eliminar un proveedor por su ID
+    // Eliminar un proveedor por ID
+    @DeleteMapping("/proveedores/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Integer id) {
+        String response = proveedoresService.deleteById(id);
+        if (response.equals("Proveedor borrado exitosamente")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
-
-
-
-    //Método personalizado
-
-    // Endpoint para obtener todos los proveedores activos
+    // Obtener todos los proveedores activos
     @GetMapping("/proveedores/activos")
     public List<ProveedoresEntity> findActiveProveedores() {
         return proveedoresService.findActiveProveedores();
     }
 
-    // Endpoint para obtener todos los proveedores inactivos
+    // Obtener todos los proveedores inactivos
     @GetMapping("/proveedores/inactivos")
     public List<ProveedoresEntity> findInactiveProveedores() {
         return proveedoresService.findInactiveProveedores();
     }
 
-
-    //Metodos Try-Cach
-
-    //
-
-    // Obtener todos los proveedores activos
-    @GetMapping("/proveedores/activoscach")
-    public ResponseEntity<List<ProveedoresEntity>> obtenerProveedoresActivos() {
-        try {
-            List<ProveedoresEntity> proveedoresActivos = proveedoresService.obtenerProveedoresActivos();
-            if (proveedoresActivos.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // Si no hay proveedores activos
-            }
-            return new ResponseEntity<>(proveedoresActivos, HttpStatus.OK);  // Si hay proveedores activos
-        } catch (Exception e) {
-            System.err.println("Error al obtener proveedores activos: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);  // Manejo de error
-        }
-    }
-
-    // Obtener todos los proveedores inactivos
-    @GetMapping("/proveedores/inactivoscach")
-    public ResponseEntity<List<ProveedoresEntity>> obtenerProveedoresInactivos() {
-        try {
-            List<ProveedoresEntity> proveedoresInactivos = proveedoresService.obtenerProveedoresInactivos();
-            if (proveedoresInactivos.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // Si no hay proveedores inactivos
-            }
-            return new ResponseEntity<>(proveedoresInactivos, HttpStatus.OK);  // Si hay proveedores inactivos
-        } catch (Exception e) {
-            System.err.println("Error al obtener proveedores inactivos: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);  // Manejo de error
-        }
-    }
-
-    // Agregar un nuevo proveedor
-    @PostMapping("/proveedorescach")
-    public ResponseEntity<String> agregarProveedor(@RequestBody ProveedoresEntity proveedor) {
-        try {
-            String respuesta = proveedoresService.agregarProveedor(proveedor);
-            return new ResponseEntity<>(respuesta, HttpStatus.CREATED);  // Retorna el mensaje con código 201
-        } catch (Exception e) {
-            System.err.println("Error al agregar proveedor: " + e.getMessage());
-            return new ResponseEntity<>("Error al agregar proveedor", HttpStatus.INTERNAL_SERVER_ERROR);  // Manejo de error
-        }
-    }
-
-    @DeleteMapping("/proveedor/logico/{id}")
-    public ResponseEntity<String> borrarProveedorLogico(@PathVariable Integer id) {
-        String resultado = proveedoresService.deleteLogicalById(id);  // Llamar al servicio para borrar lógicamente el proveedor
-        if (resultado.equals("Proveedor no encontrado")) {
-            return ResponseEntity.notFound().build();  // Si no se encuentra el proveedor, devolver un 404
-        }
-        return ResponseEntity.ok(resultado);  // Devolver respuesta exitosa
-    }
-
-    // Endpoint para buscar proveedores activos por nombre de empresa @Querry
-
-    @GetMapping("/activos/empresa")
+    // Obtener proveedores activos por nombre de empresa
+    @GetMapping("/proveedores/activos/empresa")
     public List<ProveedoresEntity> getActiveProveedoresByNombreEmpresa(@RequestParam String nombreEmpresa) {
         return proveedoresService.getActiveProveedoresByNombreEmpresa(nombreEmpresa);
     }
 
+    // Método para agregar un nuevo proveedor
+    @PostMapping("/proveedores/agregar")
+    public ResponseEntity<String> agregarProveedor(@RequestBody ProveedoresEntity proveedor) {
+        String respuesta = proveedoresService.agregarProveedor(proveedor);
+        if (respuesta.equals("Proveedor agregado correctamente")) {
+            return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Borrado lógico (marcar como inactivo)
+    @DeleteMapping("/proveedores/logico/{id}")
+    public ResponseEntity<String> deleteLogicalById(@PathVariable Integer id) {
+        String resultado = proveedoresService.deleteLogicalById(id);
+        if (resultado.equals("Proveedor marcado como inactivo exitosamente")) {
+            return ResponseEntity.ok(resultado);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultado);
+        }
+    }
 }
-
-
-
-
-

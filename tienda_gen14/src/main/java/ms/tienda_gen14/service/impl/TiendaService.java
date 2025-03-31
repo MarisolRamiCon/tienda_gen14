@@ -15,32 +15,54 @@ public class TiendaService implements ITiendaService {
 
     @Override
     public List<Tienda> getData() {
-        return tiendaClient.getData();
+        try {
+            return tiendaClient.getData().stream()
+                    .filter(Tienda::isActivo)
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener los datos de la tienda", e);
+        }
     }
 
     @Override
     public Tienda getById(Long id) {
-        return tiendaClient.getDataById(id);
-
+        try {
+            return tiendaClient.getDataById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener la tienda con ID: " + id, e);
+        }
     }
 
     @Override
     public Tienda createTienda(Tienda tienda) {
-        // Llamada al cliente Feign para crear una nueva tienda
-        return tiendaClient.createTienda(tienda);
+        try {
+            return tiendaClient.createTienda(tienda);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al crear la tienda", e);
+        }
     }
 
     @Override
     public Tienda updateTienda(Long id, Tienda tienda) {
-        // Llamada al cliente Feign para actualizar una tienda existente
-        return tiendaClient.updateTienda(id, tienda);
+        try {
+            return tiendaClient.updateTienda(id, tienda);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar la tienda con ID: " + id, e);
+        }
     }
 
     @Override
     public void deleteTienda(Long id) {
-        // Llamada al cliente Feign para eliminar una tienda por su ID
-        tiendaClient.deleteTienda(id);
+        try {
+            Tienda tienda = tiendaClient.getDataById(id);
+            if (tienda != null) {
+                tienda.setActivo(false);
+                tiendaClient.updateTienda(id, tienda);
+            } else {
+                throw new RuntimeException("La tienda con ID " + id + " no existe.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al realizar el borrado lógico de la tienda con ID: " + id, e);
+        }
     }
-
-
 }
