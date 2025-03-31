@@ -1,110 +1,239 @@
-package ms.tienda_gen14.service.impl;
-
 import ms.tienda_gen14.feign.TiendaClient;
 import ms.tienda_gen14.model.Tienda;
-import org.junit.jupiter.api.AfterEach;
+import ms.tienda_gen14.service.impl.TiendaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-public class TiendaServiceTest {
+class TiendaServiceTest {
 
     @Mock
-    private TiendaClient tiendaClient; // Mock del cliente Feign
+    private TiendaClient tiendaClient;
 
     @InjectMocks
-    private TiendaService tiendaService; // Servicio bajo prueba
-
-    private Tienda tienda1;
-    private Tienda tienda2;
+    private TiendaService tiendaService;
 
     @BeforeEach
-    public void setUp() {
-        // Preparar datos de ejemplo para las pruebas
-        tienda1 = new Tienda(1L, "Tienda 1", "Ubicación 1");
-        tienda2 = new Tienda(2L, "Tienda 2", "Ubicación 2");
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetData() {
-        // Configurar el mock para que devuelva una lista de tiendas
+    void testGetData() {
+        // Configura el comportamiento del mock
+        Tienda tienda1 = new Tienda();
+        tienda1.setActivo(true);
+
+        Tienda tienda2 = new Tienda();
+        tienda2.setActivo(false);
+
         when(tiendaClient.getData()).thenReturn(Arrays.asList(tienda1, tienda2));
 
-        // Llamar al método del servicio
-        List<Tienda> tiendas = tiendaService.getData();
+        // Llama al método que estás probando
+        List<Tienda> result = tiendaService.getData();
 
-        // Verificar que la lista devuelta contiene las tiendas esperadas
-        assertNotNull(tiendas);
-        assertEquals(2, tiendas.size());
-        assertTrue(tiendas.contains(tienda1));
-        assertTrue(tiendas.contains(tienda2));
+        // Verifica que el resultado es el esperado
+        assertNotNull(result);
+        assertEquals(1, result.size()); // Solo debe devolver la tienda activa
+
+        // Verifica que el mock fue llamado
+        verify(tiendaClient, times(1)).getData();
     }
 
     @Test
-    public void testGetById() {
-        // Configurar el mock para que devuelva una tienda por ID
-        when(tiendaClient.getDataById(anyLong())).thenReturn(tienda1);
+    void testGetById() {
+        Long tiendaId = 1L;
+        Tienda tienda = new Tienda();
+        tienda.setId(tiendaId);
+        tienda.setActivo(true);
 
-        // Llamar al método del servicio
-        Tienda tienda = tiendaService.getById(1L);
+        // Configurar el comportamiento esperado del mock
+        when(tiendaClient.getDataById(tiendaId)).thenReturn(tienda);
 
-        // Verificar que la tienda devuelta sea la esperada
-        assertNotNull(tienda);
-        assertEquals(1L, tienda.getId());
-        assertEquals("Tienda 1", tienda.getEstablecimiento());
-        assertEquals("Ubicación 1", tienda.getLugar());
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.getById(tiendaId);
+
+        // Verificar que el resultado no es nulo y que la tienda es la correcta
+        assertNotNull(result, "La tienda obtenida no debe ser nula.");
+        assertEquals(tienda, result, "La tienda obtenida debe ser igual a la tienda con el ID dado.");
+
+        // Verificar que el método del cliente fue llamado
+        verify(tiendaClient).getDataById(tiendaId);
+    }
+    @Test
+    void testGetByIdNotFound() {
+        Long tiendaId = 1L;
+
+        // Configurar el comportamiento esperado del mock para devolver null
+        when(tiendaClient.getDataById(tiendaId)).thenReturn(null);
+
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.getById(tiendaId);
+
+        // Verificar que el resultado es nulo
+        assertNull(result, "La tienda obtenida debería ser nula cuando no se encuentra en la base de datos.");
+
+        // Verificar que el método del cliente fue llamado
+        verify(tiendaClient).getDataById(tiendaId);
+    }
+    @Test
+    void testGetByIdThrowsException() {
+        Long tiendaId = 1L;
+
+        // Configurar el comportamiento del mock para lanzar una excepción
+        when(tiendaClient.getDataById(tiendaId)).thenThrow(new RuntimeException("Error al obtener la tienda"));
+
+        // Ejecutar el método a probar y verificar que lanza la excepción
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> tiendaService.getById(tiendaId));
+        assertEquals("Error al obtener la tienda con ID: " + tiendaId, exception.getMessage());
     }
 
     @Test
-    public void testCreateTienda() {
-        // Configurar el mock para que devuelva la tienda creada
-        when(tiendaClient.createTienda(any(Tienda.class))).thenReturn(tienda1);
+    void testCreateTienda() {
+        Tienda tienda = new Tienda();
+        tienda.setId(1L);
+        tienda.setActivo(true);
 
-        // Llamar al método del servicio
-        Tienda nuevaTienda = tiendaService.createTienda(tienda1);
+        // Configurar el comportamiento esperado del mock para crear una tienda
+        when(tiendaClient.createTienda(tienda)).thenReturn(tienda);
 
-        // Verificar que la tienda devuelta es la misma que la creada
-        assertNotNull(nuevaTienda);
-        assertEquals(tienda1.getId(), nuevaTienda.getId());
-        assertEquals(tienda1.getEstablecimiento(), nuevaTienda.getEstablecimiento());
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.createTienda(tienda);
+
+        // Verificar que el resultado no es nulo y que la tienda es la correcta
+        assertNotNull(result, "La tienda creada no debe ser nula.");
+        assertEquals(tienda, result, "La tienda creada debe ser igual a la tienda que se pasa como parámetro.");
+
+        // Verificar que el método del cliente fue llamado
+        verify(tiendaClient).createTienda(tienda);
     }
 
     @Test
-    public void testUpdateTienda() {
-        // Configurar el mock para que devuelva la tienda actualizada
-        when(tiendaClient.updateTienda(anyLong(), any(Tienda.class))).thenReturn(tienda1);
+    void testCreateTiendaThrowsException() {
+        Tienda tienda = new Tienda();
+        tienda.setActivo(true);
 
-        // Llamar al método del servicio
-        Tienda tiendaActualizada = tiendaService.updateTienda(1L, tienda1);
+        // Configurar el comportamiento del mock para lanzar una excepción
+        when(tiendaClient.createTienda(tienda)).thenThrow(new RuntimeException("Error al crear la tienda"));
 
-        // Verificar que la tienda devuelta es la misma que la actualizada
-        assertNotNull(tiendaActualizada);
-        assertEquals(tienda1.getId(), tiendaActualizada.getId());
-        assertEquals(tienda1.getEstablecimiento(), tiendaActualizada.getEstablecimiento());
+        // Ejecutar el método a probar y verificar que lanza la excepción
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> tiendaService.createTienda(tienda));
+        assertEquals("Error al crear la tienda", exception.getMessage());
+    }
+    @Test
+    void testCreateTiendaNullResponse() {
+        Tienda tienda = new Tienda();
+        tienda.setActivo(true);
+
+        // Configurar el comportamiento esperado del mock para devolver null
+        when(tiendaClient.createTienda(tienda)).thenReturn(null);
+
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.createTienda(tienda);
+
+        // Verificar que el resultado es nulo, o realizar otra validación si es necesario
+        assertNull(result, "La tienda creada debería ser nula cuando el cliente devuelve null.");
     }
 
     @Test
-    public void testDeleteTienda() {
-        // Configurar el mock para que la llamada no haga nada
-        Mockito.doNothing().when(tiendaClient).deleteTienda(anyLong());
+    void testUpdateTienda() {
+        Long id = 1L;
+        Tienda tienda = new Tienda();
+        tienda.setId(id);
+        tienda.setActivo(true);
 
-        // Llamar al método del servicio
-        tiendaService.deleteTienda(1L);
+        // Configurar el comportamiento esperado del mock para actualizar la tienda
+        when(tiendaClient.updateTienda(id, tienda)).thenReturn(tienda);
 
-        // Verificar que la llamada se haya hecho correctamente
-        Mockito.verify(tiendaClient, Mockito.times(1)).deleteTienda(1L);
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.updateTienda(id, tienda);
+
+        // Verificar que el resultado no es nulo y que la tienda es la correcta
+        assertNotNull(result, "La tienda actualizada no debe ser nula.");
+        assertEquals(tienda, result, "La tienda actualizada debe ser igual a la tienda que se pasa como parámetro.");
+
+        // Verificar que el método del cliente fue llamado con los parámetros correctos
+        verify(tiendaClient).updateTienda(id, tienda);
     }
+
+    @Test
+    void testUpdateTiendaThrowsException() {
+        Long id = 1L;
+        Tienda tienda = new Tienda();
+        tienda.setId(id);
+        tienda.setActivo(true);
+
+        // Configurar el comportamiento del mock para lanzar una excepción
+        when(tiendaClient.updateTienda(id, tienda)).thenThrow(new RuntimeException("Error al actualizar la tienda"));
+
+        // Ejecutar el método a probar y verificar que lanza la excepción
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> tiendaService.updateTienda(id, tienda));
+        assertEquals("Error al actualizar la tienda con ID: " + id, exception.getMessage());
+    }
+
+
+    @Test
+    void testUpdateTiendaNullResponse() {
+        Long id = 1L;
+        Tienda tienda = new Tienda();
+        tienda.setId(id);
+        tienda.setActivo(true);
+
+        // Configurar el comportamiento del mock para devolver null
+        when(tiendaClient.updateTienda(id, tienda)).thenReturn(null);
+
+        // Ejecutar el método a probar
+        Tienda result = tiendaService.updateTienda(id, tienda);
+
+        // Verificar que el resultado es nulo
+        assertNull(result, "La tienda actualizada debería ser nula cuando el cliente devuelve null.");
+    }
+
+
+    @Test
+    void testDeleteTiendaNoUpdateIfNotFound() {
+        Long id = 1L;
+
+        // Configurar el mock para simular que la tienda no existe (devuelve null)
+        when(tiendaClient.getDataById(id)).thenReturn(null);
+
+        // Ejecutar el método
+        tiendaService.deleteTienda(id);
+
+        // Verificar que el método updateTienda NO fue llamado
+        verify(tiendaClient, never()).updateTienda(any(), any());
+    }
+
+    @Test
+    void testDeleteTiendaUpdateIfFound() {
+        Long id = 1L;
+        Tienda tienda = new Tienda();
+        tienda.setId(id);
+        tienda.setActivo(true);  // La tienda está activa inicialmente
+
+        // Configurar el mock para devolver una tienda existente
+        when(tiendaClient.getDataById(id)).thenReturn(tienda);
+
+        // Ejecutar el método
+        tiendaService.deleteTienda(id);
+
+        // Verificar que el método updateTienda fue llamado con la tienda actualizada
+        verify(tiendaClient).updateTienda(eq(id), eq(tienda));
+
+        // Verificar que el estado de la tienda haya cambiado a 'no activo'
+        assertFalse(tienda.isActivo());
+    }
+
+
+
+
 }
+

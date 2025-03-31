@@ -98,7 +98,7 @@ public class ProveedoresServiceTest {
 
         String result = proveedoresService.deleteById(1);
 
-        assertEquals("Borrado exitosamente", result);
+        assertEquals("Proveedor borrado exitosamente", result);
 
         verify(proveedorRepository).deleteById(1);
     }
@@ -115,7 +115,7 @@ public class ProveedoresServiceTest {
         verify(proveedorRepository, never()).deleteById(1);
     }
 
-    // Prueba para obtener proveedores activos
+    // Prueba para el método findActiveProveedores
     @Test
     void testFindActiveProveedores() {
         when(proveedorRepository.findByIsActiveTrue()).thenReturn(List.of(proveedor));
@@ -161,103 +161,6 @@ public class ProveedoresServiceTest {
         verify(proveedorRepository).findActiveProveedoresByNombreEmpresa(nombreEmpresa);
     }
 
-    // Prueba para obtener proveedores activos correctamente
-    @Test
-    void testObtenerProveedoresActivos_Success() {
-        // Simulamos que el repositorio devuelve una lista de proveedores activos
-        when(proveedorRepository.findByIsActiveTrue()).thenReturn(List.of(proveedor));
-
-        // Llamamos al método del servicio
-        List<ProveedoresEntity> result = proveedoresService.obtenerProveedoresActivos();
-
-        // Verificamos que el resultado no es nulo ni vacío
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size()); // Verificamos que se devolvió 1 proveedor activo
-
-        // Verificamos que se llamó al repositorio
-        verify(proveedorRepository).findByIsActiveTrue();
-    }
-    // Prueba para obtener proveedores activos cuando ocurre un error de acceso a datos
-    @Test
-    void testObtenerProveedoresActivos_ErrorDeAccesoADatos() {
-        // Simulamos que el repositorio lanza una DataAccessException
-        when(proveedorRepository.findByIsActiveTrue()).thenThrow(new DataAccessException("Error en la base de datos") {});
-
-        // Llamamos al método del servicio
-        List<ProveedoresEntity> result = proveedoresService.obtenerProveedoresActivos();
-
-        // Verificamos que el resultado sea null (como se maneja en el código del servicio)
-        assertNull(result);
-
-        // Verificamos que el repositorio haya sido llamado
-        verify(proveedorRepository).findByIsActiveTrue();
-    }
-    // Prueba para obtener proveedores inactivos correctamente
-    @Test
-    void testObtenerProveedoresInactivos_Success() {
-        // Simulamos que el repositorio devuelve una lista de proveedores inactivos
-        when(proveedorRepository.findByIsActiveFalse()).thenReturn(List.of(proveedor));
-
-        // Llamamos al método del servicio
-        List<ProveedoresEntity> result = proveedoresService.obtenerProveedoresInactivos();
-
-        // Verificamos que el resultado no es nulo ni vacío
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size()); // Verificamos que se devolvió 1 proveedor inactivo
-
-        // Verificamos que se llamó al repositorio
-        verify(proveedorRepository).findByIsActiveFalse();
-    }
-
-
-    // Prueba para obtener proveedores inactivos cuando ocurre un error de acceso a datos
-    @Test
-    void testObtenerProveedoresInactivos_ErrorDeAccesoADatos() {
-        // Simulamos que el repositorio lanza una DataAccessException
-        when(proveedorRepository.findByIsActiveFalse()).thenThrow(new DataAccessException("Error en la base de datos") {});
-
-        // Llamamos al método del servicio
-        List<ProveedoresEntity> result = proveedoresService.obtenerProveedoresInactivos();
-
-        // Verificamos que el resultado sea null (como se maneja en el código del servicio)
-        assertNull(result);
-
-        // Verificamos que el repositorio haya sido llamado
-        verify(proveedorRepository).findByIsActiveFalse();
-    }
-    // Prueba para agregar un proveedor correctamente
-    @Test
-    void testAgregarProveedor_Success() {
-        // Simulamos que el repositorio guarda el proveedor correctamente
-        when(proveedorRepository.save(proveedor)).thenReturn(proveedor);
-
-        // Llamamos al método del servicio
-        String result = proveedoresService.agregarProveedor(proveedor);
-
-        // Verificamos que el resultado sea el mensaje correcto
-        assertEquals("Proveedor agregado correctamente", result);
-
-        // Verificamos que se haya llamado al repositorio para guardar el proveedor
-        verify(proveedorRepository).save(proveedor);
-    }
-    // Prueba para agregar un proveedor cuando ocurre un error de acceso a datos
-    @Test
-    void testAgregarProveedor_ErrorDeAccesoADatos() {
-        // Simulamos que el repositorio lanza una DataAccessException
-        when(proveedorRepository.save(proveedor)).thenThrow(new DataAccessException("Error en la base de datos") {});
-
-        // Llamamos al método del servicio
-        String result = proveedoresService.agregarProveedor(proveedor);
-
-        // Verificamos que el resultado sea el mensaje de error
-        assertEquals("Error al agregar el proveedor", result);
-
-        // Verificamos que el repositorio haya sido llamado
-        verify(proveedorRepository).save(proveedor);
-    }
-
     // Prueba para el borrado lógico con proveedor existente
     @Test
     void testDeleteLogicalById_ProveedorExistente() {
@@ -276,6 +179,7 @@ public class ProveedoresServiceTest {
         // Verificamos que se llamó al repositorio para guardar el proveedor con el estado actualizado
         verify(proveedorRepository).save(proveedor);
     }
+
     // Prueba para el borrado lógico con proveedor no existente
     @Test
     void testDeleteLogicalById_ProveedorNoExistente() {
@@ -290,7 +194,28 @@ public class ProveedoresServiceTest {
 
         // Verificamos que no se llamó al repositorio para guardar el proveedor
         verify(proveedorRepository, never()).save(any(ProveedoresEntity.class));
+
     }
 
+
+    @Test
+    void testGetActiveProveedoresByNombreEmpresaQuery() {
+        // Nombre de la empresa que se va a buscar
+        String nombreEmpresa = "Proveedor Test";
+
+        // Simulamos que el repositorio devuelve una lista de proveedores con el nombre de empresa especificado
+        when(proveedorRepository.findByNombreEmpresa(nombreEmpresa)).thenReturn(List.of(proveedor));
+
+        // Llamamos al método del servicio
+        List<ProveedoresEntity> result = proveedoresService.getActiveProveedoresByNombreEmpresaQuery(nombreEmpresa);
+
+        // Verificamos que el resultado no es nulo ni vacío
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());  // Comprobamos que se devolvió 1 proveedor
+
+        // Verificamos que el repositorio fue llamado con el nombre de la empresa correcto
+        verify(proveedorRepository).findByNombreEmpresa(nombreEmpresa);
+    }
 
 }

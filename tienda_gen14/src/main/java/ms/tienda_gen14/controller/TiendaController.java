@@ -3,6 +3,7 @@ package ms.tienda_gen14.controller;
 import ms.tienda_gen14.model.Tienda;
 import ms.tienda_gen14.service.impl.TiendaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,31 +15,49 @@ public class TiendaController {
     TiendaService tiendaService;
 
     @GetMapping("/Tienda")
-    public List<Tienda> getData(){
-        return tiendaService.getData();
+    public ResponseEntity<List<Tienda>> getData() {
+        try {
+            return ResponseEntity.ok(tiendaService.getData());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
     }
 
     @GetMapping("/Tienda/{id}")
-    public Tienda getById(@PathVariable Long id){
-        return tiendaService.getById(id);
+    public ResponseEntity<Tienda> getById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(tiendaService.getById(id));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
     }
 
-    // Crear una nueva tienda
     @PostMapping("/Tienda")
-    public Tienda createTienda(@RequestBody Tienda tienda) {
-        return tiendaService.createTienda(tienda); // Llama al servicio para crear una tienda
+    public ResponseEntity<Tienda> createTienda(@RequestBody Tienda tienda) {
+        try {
+            return ResponseEntity.ok(tiendaService.createTienda(tienda));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
     }
 
-    // Actualizar una tienda existente
     @PutMapping("/Tienda/{id}")
-    public Tienda updateTienda(@PathVariable Long id, @RequestBody Tienda tienda) {
-        return tiendaService.updateTienda(id, tienda); // Llama al servicio para actualizar una tienda
+    public ResponseEntity<Tienda> updateTienda(@PathVariable Long id, @RequestBody Tienda tienda) {
+        try {
+            return ResponseEntity.ok(tiendaService.updateTienda(id, tienda));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
     }
 
-    // Eliminar una tienda por su ID
     @DeleteMapping("/Tienda/{id}")
-    public void deleteTienda(@PathVariable Long id) {
-        tiendaService.deleteTienda(id); // Llama al servicio para eliminar una tienda
+    public ResponseEntity<Void> deleteTienda(@PathVariable Long id) {
+        try {
+            tiendaService.deleteTienda(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
-
 }
+
